@@ -1,12 +1,18 @@
 import time
+import random as rd
+from time import perf_counter
+
+
 class Case:
 ##########
 ##################################################################
 ###########  Next is building and connecting the cases as modular as possible
+##########Building cases, take average
     def __init__(self):
-        self.best_case = []
-        self.worst_case= []
-        self.average_case = []
+        self.best = []
+        self.worst= []
+        self.average = []
+
 
     def bubble_sort(self, my_list):
         sorted = False
@@ -26,7 +32,7 @@ class Case:
     def merge_sort(self, my_list):
         if len(my_list) <= 1:
             return my_list
-        middle = len(m) // 2
+        middle = len(my_list) // 2
         left = my_list[:middle]
         right = my_list[middle:]
         left = self.merge_sort(left)
@@ -41,9 +47,9 @@ class Case:
             if left[left_idx] <= right[right_idx]:
                 result.append(left[left_idx])
                 left_idx += 1
-        else:
-            result.append(right[right_idx])
-            right_idx += 1
+            else:
+                result.append(right[right_idx])
+                right_idx += 1
         if left_idx < len(left):
             result.extend(left[left_idx:])
         if right_idx < len(right):
@@ -73,10 +79,8 @@ class Case:
 
             my_list[j + 1] = key  # Insert key in the correct position
 
-        print("Passes:", pass_count)
-        print("Swaps:", swap_count)
-        print("Comparisons:", comparison_count)
-        return list
+
+        return my_list
 
     def partition(self, array, begin, end):
         pivot_idx = begin
@@ -113,13 +117,32 @@ class Case:
 
 
     def case_scenarios(self, choice):
+        #pass in choice so that i do not have to rebuild functions for each
         new_choice = input(f'Case Scenarios for {choice}\n'
                        f'--------------------------------------\n'
                        f'1.\tBest Case\n'
                        f'2.\tAverage Case\n'
                        f'3.\tWorst Case\n' 
                        f'4.\tExit {choice} Test')
+        choices = {'1': lambda:self.best_case(choice), '2': lambda:self.avg_case(choice), '3':lambda:self.worst_case(choice), '4': ""}
 
+        if new_choice == '4':
+            return
+
+        return choices[new_choice](choice)
+
+    def best_case(self, choice):
+        self.best = [rd.randint(1,2*100) for i in range(100)]
+
+        start = time.perf_counter()
+
+        pass
+
+    def worst_case(self, choice):
+        pass
+
+    def avg_case(self, choice):
+        pass
 
 def main_menu():
     choice = input('Select the sorting algorithm you want to test\n'
