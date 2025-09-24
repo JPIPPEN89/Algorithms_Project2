@@ -9,9 +9,11 @@ class Case:
 ###########  Next is building and connecting the cases as modular as possible
 ##########Building cases, take average
     def __init__(self):
-        self.best = []
-        self.worst= []
-        self.average = []
+
+        self.choices = {'Bubble Sort': self.bubble_sort,
+                   'Merge Sort': self.merge_sort,
+                   'Insertion Sort':self.insertion_sort,
+                   'Quick Sort':  self.quick_sort}
 
 
     def bubble_sort(self, my_list):
@@ -104,45 +106,122 @@ class Case:
 
         return self.quick_sort_recursion(array, begin, end)
 
-    def new_n(self):
+    def new_n(self,case,algo): ##############Still finishing
         choice = ''
-
+        N =0
         while choice != 'y' or 'Y' or 'n' or 'N':
 
             choice = input('Do you want to input another N (Y/N)? ')
 
             if choice == 'N' or choice == 'n':
-                return
+                return self.case_scenarios()
             elif choice == 'Y' or choice == 'y':
+                N = input('What is the N?')
+                N= int(N)
+
+            if case == 'best':
+                lst = [rd.randint(0,2*N) for i in range(N)]
+                lst.sort()
+                avg = self.generate_time(N,algo,lst)
+
+            elif case == 'worst':
+                lst = [rd.randint(0, 2 * N) for i in range(N)]
+                lst.sort(reverse=True)
+                avg = self.generate_time(N, algo, lst)
+
+            else:
+                lst = [rd.randint(0, 2 * N) for i in range(N)]
+                avg = self.generate_time(N, algo, lst)
+
+            print(f'For N = {N}, it takes {avg} seconds')
+        pass
 
 
     def case_scenarios(self, choice):
         #pass in choice so that i do not have to rebuild functions for each
-        new_choice = input(f'Case Scenarios for {choice}\n'
-                       f'--------------------------------------\n'
-                       f'1.\tBest Case\n'
-                       f'2.\tAverage Case\n'
-                       f'3.\tWorst Case\n' 
-                       f'4.\tExit {choice} Test')
-        choices = {'1': lambda:self.best_case(choice), '2': lambda:self.avg_case(choice), '3':lambda:self.worst_case(choice), '4': ""}
+        while True:
+            new_choice = input(f'Case Scenarios for {choice}\n'
+                           f'--------------------------------------\n'
+                           f'1.\tBest Case\n'
+                           f'2.\tAverage Case\n'
+                           f'3.\tWorst Case\n' 
+                           f'4.\tExit {choice} Test')
+            selection = {'1': self.best_case, '2': self.avg_case, '3':self.worst_case, '4': ""}
 
-        if new_choice == '4':
-            return
+            if new_choice == '4':
+                return
 
-        return choices[new_choice](choice)
+            return selection[new_choice](choice)
 
+    #Sorted List
     def best_case(self, choice):
-        self.best = [rd.randint(1,2*100) for i in range(100)]
+        k=100
+        best = [rd.randint(1, 2 * k) for i in range(k)]
+        best.sort()
+        print('In best case,')
 
-        start = time.perf_counter()
+        for i in range(3):
+            avg = self.generate_time(k,choice,best)
+            print(f'For N = {k}, it takes {avg} seconds')
+            k *= 10
+            best = [rd.randint(1, 2 * k) for i in range(k)]
+            best.sort()
 
-        pass
+        return self.new_n('best',choice)
 
+
+    def generate_time(self,k,choice,arr):
+        k=100
+        avg=0
+
+        for j in range(3):
+
+            avg_times = []
+
+            for i in range(5):
+                start = time.perf_counter()
+                lst = self.choices[choice](arr)
+                end = time.perf_counter()
+                avg_times.append(end - start)
+
+            avg = 0
+            for _ in avg_times:
+                avg += _
+
+            avg /= 5
+        return avg
+
+    #Reverse Sorted Array
     def worst_case(self, choice):
-        pass
+        k = 100
+        best = [rd.randint(1, 2 * k) for i in range(k)]
+        best.sort(reverse=True)
+        print('In best case,')
 
+        for i in range(3):
+            avg = self.generate_time(k, choice, best)
+            print(f'For N = {k}, it takes {avg} seconds')
+            k *= 10
+            best = [rd.randint(1, 2 * k) for i in range(k)]
+            best.sort(reverse=True)
+
+        return self.new_n('worst',choice)
+
+    #Random Array
     def avg_case(self, choice):
-        pass
+        k = 100
+        best = [rd.randint(1, 2 * k) for i in range(k)]
+
+        print('In best case,')
+
+        for i in range(3):
+            avg = self.generate_time(k, choice, best)
+            print(f'For N = {k}, it takes {avg} seconds')
+            k *= 10
+            best = [rd.randint(1, 2 * k) for i in range(k)]
+
+
+        return self.new_n('avg', choice)
 
 def main_menu():
     choice = input('Select the sorting algorithm you want to test\n'
@@ -155,7 +234,8 @@ def main_menu():
 
     choices = {'1': 'Bubble Sort', '2': 'Merge Sort', '3': 'Quick Sort', '4': 'Insertion Sort', '5': 5}
 
-    return choices[choice]
+
+    return Case().case_scenarios(choices[choice])
 
 
 
