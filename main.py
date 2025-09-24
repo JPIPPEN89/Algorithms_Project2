@@ -1,13 +1,14 @@
 import time
 import random as rd
 from time import perf_counter
+import matplotlib.pyplot as plt
+import numpy as np
 
 
 class Case:
 ##########
 ##################################################################
-###########  Next is building and connecting the cases as modular as possible
-##########Building cases, take average
+###########  Current Task, connect plt graphs to algorithms
     def __init__(self):
 
         self.choices = {'Bubble Sort': self.bubble_sort,
@@ -114,7 +115,7 @@ class Case:
             choice = input('Do you want to input another N (Y/N)? ')
 
             if choice == 'N' or choice == 'n':
-                return self.case_scenarios()
+                return self.case_scenarios(algo)
             elif choice == 'Y' or choice == 'y':
                 N = input('What is the N?')
                 N= int(N)
@@ -223,6 +224,32 @@ class Case:
 
         return self.new_n('avg', choice)
 
+    def create_graphs(self):
+
+        x = [100, 1000, 10000, 100000]  # Create 100 points logarithmically spaced between 10^1 and 10^4
+
+
+        y1 = [i ** 2 for i in x]  # Example relationship
+        y2 = [i * np.log(i) for i in x]
+        y3 = [i for i in x]
+        # Create the plot with log-log scaling
+        plt.loglog(x, y1, label='worst case', marker='o', linestyle='-', )
+        plt.loglog(x, y2, marker='*', linestyle='-', label='average case')
+        plt.loglog(x, y3, marker='o', linestyle='-', label='best case')
+
+        # Add labels and title
+        plt.xlabel('Input data size (log scale)')
+        plt.ylabel('Time costs (log scale)')
+        plt.title('Data size vs. time-cost Plot')
+
+        # Add grid lines for better readability (optional)
+        plt.grid(True, which="both", ls="-")
+
+        plt.legend()
+
+        # Show the plot
+        plt.show()
+
 def main_menu():
     choice = input('Select the sorting algorithm you want to test\n'
           '--------------------------------------\n'
@@ -234,6 +261,8 @@ def main_menu():
 
     choices = {'1': 'Bubble Sort', '2': 'Merge Sort', '3': 'Quick Sort', '4': 'Insertion Sort', '5': 5}
 
+    if choices[choice] == 5:
+        return 5
 
     return Case().case_scenarios(choices[choice])
 
@@ -247,3 +276,6 @@ if __name__ == '__main__':
     choice = 0
     while choice != 5:
         choice = main_menu()
+        if choice == 5:
+            print('Have a nice day!')
+            break
