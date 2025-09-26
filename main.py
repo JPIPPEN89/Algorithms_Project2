@@ -23,9 +23,9 @@ class Case:
         # use this to save the data
         self.algo_data = pd.DataFrame(
             index=range(4), columns=[
-                                   'Best_n100', 'Best_n1000','Best_n10000','Best_n100k'
-                                   ,'Worst_n100', 'Worst_n1000','Worst_n10000', 'Worst_n100k'
-                                    , 'Average_n100', 'Average_n1000', 'Average_n10000', 'Average_n100k'])
+                                   'Best_n100', 'Best_n1000','Best_n10000','Best_n100k','Best_1M'
+                                   ,'Worst_n100', 'Worst_n1000','Worst_n10000', 'Worst_n100k', 'Worst_1M'
+                                    , 'Average_n100', 'Average_n1000', 'Average_n10000', 'Average_n100k','Average_1M'])
 
         #Setting the index to algorithms in use
         self.algo_data.index = self.algo_list
@@ -144,15 +144,27 @@ class Case:
                 lst = [rd.randint(0,2*N) for i in range(N)]
                 lst.sort()
                 avg = self.generate_time(N,algo,lst)
+                if N==100000:
+                    self.algo_data.loc[algo, 'Best_n100k'] = avg
+                elif N==1000000:
+                    self.algo_data.loc[algo, 'Best_n1M'] = avg
 
             elif case == 'worst':
                 lst = [rd.randint(0, 2 * N) for i in range(N)]
                 lst.sort(reverse=True)
                 avg = self.generate_time(N, algo, lst)
+                if N==100000:
+                    self.algo_data.loc[algo, 'Worst_n100k'] = avg
+                elif N==1000000:
+                    self.algo_data.loc[algo, 'Worst_n1M'] = avg
 
             else:
                 lst = [rd.randint(0, 2 * N) for i in range(N)]
                 avg = self.generate_time(N, algo, lst)
+                if N==100000:
+                    self.algo_data.loc[algo, 'Average_n100k'] = avg
+                elif N==1000000:
+                    self.algo_data.loc[algo, 'Average_n1M'] = avg
 
             print(f'For N = {N}, it takes {avg} seconds')
         pass
@@ -196,10 +208,13 @@ class Case:
                 self.algo_data.loc[choice, 'Best_n1000'] = avg
             elif k == 10000:
                 self.algo_data.loc[choice, 'Best_n10000'] = avg
+            elif k == 100000:
+                self.algo_data.loc[choice, 'Best_n100k'] = avg
 
             k *= 10
-            best = [rd.randint(1, 2 * k) for i in range(k)]
-            best.sort()
+            if choice != 'Quick Sort':
+                best = [rd.randint(1, 2 * k) for i in range(k)]
+                best.sort()
 
 
         return self.new_n('best',choice)
@@ -235,6 +250,10 @@ class Case:
         worst.sort(reverse=True)
         print('In worst case,')
 
+        if choice == 'Quick Sort':
+            print('Cannot Generate Worst Case For Quick Sort.')
+            return self.case_scenarios(choice)
+
         for i in range(3):
             avg = self.generate_time(k, choice, worst)
             print(f'For N = {k}, it takes {avg} seconds')
@@ -245,6 +264,8 @@ class Case:
                 self.algo_data.loc[choice, 'Worst_n1000'] = avg
             elif k == 10000:
                 self.algo_data.loc[choice, 'Worst_n10000'] = avg
+
+
 
             k *= 10
             worst = [rd.randint(1, 2 * k) for i in range(k)]
@@ -269,6 +290,8 @@ class Case:
                 self.algo_data.loc[choice, 'Average_n1000'] = avg
             elif k == 10000:
                 self.algo_data.loc[choice, 'Average_n10000'] = avg
+            elif k == 100000:
+                self.algo_data.loc[choice, 'Average_n100k'] = avg
 
             k *= 10
             average = [rd.randint(1, 2 * k) for i in range(k)]
